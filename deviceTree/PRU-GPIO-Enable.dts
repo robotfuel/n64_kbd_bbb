@@ -1,0 +1,55 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+       /*BOARDS*/
+       compatible = "ti,beaglebone", "ti,beaglebone-black";
+
+       /*IDENTIFICATION*/
+       part-number = "BB-BONE-PRU";
+       version = "00A0";
+
+       /*EXCLUSIVE USE -optional*/
+       exclusive-use = "P8.12";
+
+
+       fragment@0 {
+             target = <&am33xx_pinmux>;
+             __overlay__ {
+                  pinctrl_test: DM_GPIO_Test_Pins {
+                        pinctrl-single,pins = <
+                                /*
+                                        0x07 = 0b0000111
+                                                     :6543210:
+                                        6 = slew rate           (0 = fast, 1 = slow)
+                                        5 = input enable        (0 = output, 1 = input)
+                                        4 = pad pullup/pulldown (0 = pulldown, 1 = pullup)
+                                        3 = pad enabled         (0 = enabled, 1 = disabled)
+                                        2-0 = mux selection     (1-7, check mux tables)
+                                */
+                                0x030 0x27  /* P8_12: fast, output, pulldown, enabled, pinmux 7 for GPIO1_12*/
+                        >;
+                  };
+             };
+       };
+
+       fragment@1 {
+                target = <&ocp>;
+                __overlay__ {
+                        test_helper: helper {
+                                compatible = "bone-pinmux-helper";
+                                pinctrl-names = "default";
+                                pinctrl-0 = <&pinctrl_test>;
+                                status = "okay";
+                        };
+                };
+        };
+
+        fragment@2 {
+                target = <&pruss>;
+                __overlay__ {
+                        status = "okay";
+                };
+        };
+
+};

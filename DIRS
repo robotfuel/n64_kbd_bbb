@@ -1,0 +1,9 @@
+APP_DIRS :=
+APP_DIRS += ./
+
+ASSEM_FILES :=
+ASSEM_FILES += ./pjx74.p
+
+BIN_FILES :=
+BIN_FILES += pjx74.bin
+

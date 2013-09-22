@@ -1,0 +1,38 @@
+include DIRS
+
+CROSS_COMPILE?=arm-linux-gnueabihf-
+
+LIBDIR_APP_LOADER?=../am335x_pru_package/pru_sw/app_loader/lib
+INCDIR_APP_LOADER?=../am335x_pru_package/pru_sw/app_loader/include
+PASM?=../am335x_pru_package/pru_sw/utils/pasm_2
+BINDIR?=./
+
+CFLAGS+= -Wall -I$(INCDIR_APP_LOADER) -D__DEBUG -O2 -mtune=cortex-a8 -march=armv7-a
+LDFLAGS+=-L$(LIBDIR_APP_LOADER) -lprussdrv -lpthread -lSDL -lm
+OBJDIR=./
+TARGET=./pjx74
+
+
+_DEPS = 
+DEPS = $(patsubst %,$(INCDIR_APP_LOADER)/%,$(_DEPS))
+
+_OBJ = pjx74.o
+OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
+
+
+$(OBJDIR)/%.o: %.c $(DEPS)
+	@mkdir -p obj
+	$(CROSS_COMPILE)gcc $(CFLAGS) -c -o $@ $< 
+
+
+$(TARGET): $(OBJ)
+	$(CROSS_COMPILE)gcc $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+
+	${PASM} -V3 -b ./pjx74.p								  
+        
+
+.PHONY: clean
+
+clean:
+	rm $(TARGET) *.o *.bin
